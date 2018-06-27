@@ -232,6 +232,143 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://bakerlees.github.io/2018/06/28/arguments/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Baker Lee">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BakerLee's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/06/28/arguments/" itemprop="url">arguments</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-28T01:00:55+08:00">
+                2018-06-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>这篇博客概括起来比较简单粗暴，就是写函数的常用属性和arguments对象。</p>
+<h2 id="函数的属性"><a href="#函数的属性" class="headerlink" title="函数的属性"></a>函数的属性</h2><ul>
+<li>foo.name 函数名</li>
+<li>foo.length 形参的个数</li>
+<li><p>arguments.length 实参的个数</p>
+<p>  🌰：</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">function foo(x,y,z) &#123;</span><br><span class="line">    arguments.length; //2</span><br><span class="line">    arguments[0]; //1</span><br><span class="line">    arguments[0] = 10;</span><br><span class="line">    x; //10</span><br><span class="line"></span><br><span class="line">    arguments[2] = 100; </span><br><span class="line">    z; //undefined</span><br><span class="line">    arguments.callee === foo; true</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">foo(1,2);</span><br><span class="line">foo.length;// 3</span><br><span class="line">foo.name; //&quot;foo&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="arguments"><a href="#arguments" class="headerlink" title="arguments"></a>arguments</h2><p>还是楼上那段代码，来聊聊arguments。<br>arguments是一个类数组的对象。<br>之所以说是类数组，因为它原型并不是Array.prototype。<br>但是我们可以像访问数组一样访问它。<br>我们可以看到，我们可以通过访问arguments来修改形参的值。<br>但是楼上的代码也提示了一个坑:<br>如果某个参数没有传进来，arguments和它就不具有绑定关系。因此当我们给arguments[2]赋值的时候，形参的值并没有改变。<br>因此,我们把arguments理解为和被传值的形参相绑定的类数组对象</p>
+<p>arguments.callee返回的是arguments对应的函数对象。<br>在”use strict”模式下，arguments.callee是不能使用的，而且arguments和形参不再具有绑定关系，只是形参的一个副本～～</p>
+<h2 id="bind方法更进一步"><a href="#bind方法更进一步" class="headerlink" title="bind方法更进一步"></a>bind方法更进一步</h2><p>bind方法上一篇博客说apply和call的时候提了一下，这一篇博客再深入介绍个别的用法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function add(a,b,c) &#123;</span><br><span class="line">    return a + b + c;</span><br><span class="line">&#125; </span><br><span class="line">var func = add.bind(undefined, 100);</span><br><span class="line">func(1,2); //103</span><br><span class="line"></span><br><span class="line">var func2 = func.bind(undefined, 200);</span><br><span class="line">func2(10); //310</span><br></pre></td></tr></table></figure>
+<p>它不仅可以用来修改this的指向，还可以把一个函数的参数分阶段传入～～<br>只有当最后一个参数被传入的时候，函数才真正被调用了。</p>
+<h2 id="构造函数和bind"><a href="#构造函数和bind" class="headerlink" title="构造函数和bind"></a>构造函数和bind</h2><p>先看一个🌰：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">function foo() &#123;</span><br><span class="line">    this.b = 100;</span><br><span class="line">    return this.a;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var func = foo.bind(&#123;a:1&#125;);</span><br><span class="line"></span><br><span class="line">func(); //1</span><br><span class="line">new func(); // &#123;b:100&#125;</span><br></pre></td></tr></table></figure>
+<p>当我们对一个构造函数用bind的时候，如果我们直接调用它，和普通函数的bind没差。<br>如果用了new,return除非是对象，如果return不是对象，那么仍然让原有的this作为返回值。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>基础的东西每学一次总会有新的收获，加油~</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://bakerlees.github.io/2017/12/03/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -393,7 +530,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
